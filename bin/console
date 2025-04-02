@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Hytmng\PhpShell\Shell;
+use Hytmng\PhpShell\Command\PrintCommand;
+use Hytmng\PhpShell\Command\ExitCommand;
+
+$shell = Shell::createForConsole('psh', '1.0.0a');
+$shell->addCommand(new PrintCommand());
+$shell->addCommand(new ExitCommand());
+$shell->launch();
+
+while ($shell->isRunning()) {
+	$input = readline($shell->getPrompt());
+	$shell->handleUserInput($input);
+}

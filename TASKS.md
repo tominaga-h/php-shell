@@ -3,5 +3,10 @@
 ## GENERAL
 
 - [ ] src/PhpShell/Command配下のコマンドをsymfony/DIで取得できるようにする
-- [ ] symfony/consoleを使って実装する
-- [ ] readline等の標準入力はクラスに書かず、bin/consoleに書くことでテスト回避
+- [x] symfony/consoleを使って実装する
+- [x] readline等の標準入力はクラスに書かず、bin/consoleに書くことでテスト回避
+- [x] symfony/consoleのApplicationクラスをラップするクラスをsrc/PhpShellに追加
+- [ ] コマンドの出力結果に改行がなかったら%を追加して改行、改行があればなにもしない
+- [ ] シェルを起動時にメッセージ表示（Shellクラスのメソッドを使用）
+- [x] とりあえず動くまで実装
+
