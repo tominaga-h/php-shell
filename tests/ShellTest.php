@@ -7,6 +7,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Hytmng\PhpShell\Shell;
 use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\Command\PrintCommand;
@@ -43,6 +44,29 @@ class ShellTest extends TestCase
 		$this->assertEquals('test> ', $this->shell->getPrompt());
 	}
 
+	public function testGetStyle_throwException_noOutput()
+	{
+		$this->expectException(\RuntimeException::class);
+		$this->expectExceptionMessage('Output is not set.');
+		$this->shell->getStyle();
+	}
+
+	public function testGetStyle_throwException_noInput()
+	{
+		$this->expectException(\RuntimeException::class);
+		$this->expectExceptionMessage('Input is not set.');
+		$this->shell->setOutput(new BufferedOutput());
+		$this->shell->getStyle();
+	}
+
+	public function testGetStyle()
+	{
+		$this->shell = Shell::createForConsole('test', '1.0.0');
+		$style = $this->shell->getStyle();
+
+		$this->assertInstanceOf(SymfonyStyle::class, $style);
+	}
+
 	public function testLaunch_throwException()
 	{
 		$this->expectException(\RuntimeException::class);
@@ -61,6 +85,7 @@ class ShellTest extends TestCase
 	public function testRunning_launch()
 	{
 		$this->shell = Shell::createForConsole('test', '1.0.0');
+		$this->shell->setOutput(new BufferedOutput());
 		$this->shell->launch();
 
 		$this->assertTrue($this->shell->isRunning());
@@ -69,6 +94,7 @@ class ShellTest extends TestCase
 	public function testRunning_exit()
 	{
 		$this->shell = Shell::createForConsole('test', '1.0.0');
+		$this->shell->setOutput(new BufferedOutput());
 		$this->shell->launch();
 		$this->shell->exit();
 

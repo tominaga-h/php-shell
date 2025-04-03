@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\Command\CommandResults;
 use Hytmng\PhpShell\IO\InputFactory;
@@ -68,6 +69,19 @@ class Shell
 		return $this->output;
 	}
 
+	public function getStyle(): SymfonyStyle
+	{
+		if (\is_null($this->output)) {
+			throw new \RuntimeException('Output is not set.');
+		}
+
+		if (\is_null($this->input)) {
+			throw new \RuntimeException('Input is not set.');
+		}
+
+		return new SymfonyStyle($this->input, $this->output);
+	}
+
 	public function addCommand(Command $command): void
 	{
 		if (\is_null($this->application)) {
@@ -103,6 +117,7 @@ class Shell
 		}
 
 		$this->running = true;
+		$this->getStyle()->title(\sprintf('Welcome to %s!', $this->application->getName()));
 	}
 
 	public function isRunning(): bool
