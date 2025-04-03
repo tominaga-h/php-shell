@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Hytmng\PhpShell\Shell;
 use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\Command\PrintCommand;
-use Hytmng\PhpShell\Command\CommandResults;
+use Hytmng\PhpShell\Command\ExitCommand;
 
 class ShellTest extends TestCase
 {
@@ -133,9 +133,17 @@ class ShellTest extends TestCase
 
 	public function testHandleResult()
 	{
-		$this->shell->setOutput(new BufferedOutput());
-		$this->shell->handleResult(CommandResults::EXIT);
-		$this->assertFalse($this->shell->isRunning());
+		$output = new BufferedOutput();
+		$this->shell = Shell::createForConsole('test', '1.0.0');
+		$this->shell->setOutput($output);
+		$this->shell->addCommand(new ExitCommand());
+
+		$this->shell->handleUserInput('exit');
+		$command = $this->shell->findCommand('exit');
+		$result = $this->shell->execCommand($command);
+
+		$this->assertEquals(9, $result);
+		$this->assertEquals('Bye!' . PHP_EOL, $output->fetch());
 	}
 
 }
