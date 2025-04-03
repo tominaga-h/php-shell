@@ -70,6 +70,10 @@ class Shell
 
 	public function addCommand(Command $command): void
 	{
+		if (\is_null($this->application)) {
+			throw new \RuntimeException('Application is not set.');
+		}
+
 		$this->application->add($command);
 	}
 
@@ -141,10 +145,11 @@ class Shell
 	 *
 	 * @param Command $command コマンド
 	 */
-	public function execCommand(Command $command): void
+	public function execCommand(Command $command): int
 	{
 		$result = $command->run($this->input, $this->output);
 		$this->handleResult($result);
+		return $result;
 	}
 
 	/**

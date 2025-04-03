@@ -10,6 +10,8 @@ install:
 	docker exec -it $(CONTAINER_NAME) composer install
 test:
 	docker exec -it $(CONTAINER_NAME) composer test
+test-coverage:
+	docker exec -it $(CONTAINER_NAME) composer test-coverage
 php:
 	docker exec -it $(CONTAINER_NAME) php -a
 push:
