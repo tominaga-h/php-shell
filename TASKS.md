@@ -13,6 +13,7 @@
 - [x] リストコマンドを実装
 - [ ] ~~やっぱりcreateでsetInputやりたいからラッパークラスを実装~~
 - [x] UserInputじゃなくInputFactoryを作る
+- [x] うえ矢印で過去のコマンドを選択できるように
 
 ## FEATURE (将来)
 

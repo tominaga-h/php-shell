@@ -20,6 +20,12 @@ function main(Shell $shell)
 
 	while ($shell->isRunning()) {
 		$userInput = readline($shell->getPrompt());
+
+		if (trim($userInput) === '') {
+			continue;
+		}
+
+		readline_add_history($userInput);
 		$shell->handleUserInput($userInput);
 
 		$input = $shell->getInput();
