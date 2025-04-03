@@ -6,10 +6,10 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\Command\CommandResults;
-
+use Hytmng\PhpShell\IO\InputFactory;
 class Shell
 {
 	private ?Application $application;
@@ -18,6 +18,8 @@ class Shell
 
 	// シェルが実行中かどうか
 	private bool $running;
+	// シェルのプロンプト
+	private string $prompt = 'psh> ';
 
 	public function __construct()
 	{
@@ -30,7 +32,8 @@ class Shell
 	public static function createForConsole(string $name, string $version): self
 	{
 		$shell = new Self();
-		$shell->setApplication(new Application($name, $version));
+		$shell->setApplication(new ReplApplication($name, $version));
+		$shell->setInput(InputFactory::create());
 		$shell->setOutput(new ConsoleOutput());
 		return $shell;
 	}
@@ -38,6 +41,11 @@ class Shell
 	public function setApplication(Application $application): void
 	{
 		$this->application = $application;
+	}
+
+	public function getApplication(): ?Application
+	{
+		return $this->application;
 	}
 
 	public function setInput(InputInterface $input): void
@@ -65,9 +73,19 @@ class Shell
 		$this->application->add($command);
 	}
 
+	public function getCommands(): array
+	{
+		return $this->application->all();
+	}
+
+	public function setPrompt(string $prompt): void
+	{
+		$this->prompt = $prompt;
+	}
+
 	public function getPrompt(): string
 	{
-		return 'psh> ';
+		return $this->prompt;
 	}
 
 	public function launch(): void
@@ -94,25 +112,27 @@ class Shell
 	}
 
 	/**
-	 * ユーザーの入力からコマンド名を取得する
+	 * ユーザーの入力を処理する
 	 *
-	 * @param string $userInput ユーザーの入力
-	 * @return string コマンド名
+	 * @param string $input ユーザーの入力
 	 */
-	public function getCommandName(string $userInput): string
+	public function handleUserInput(string $input): void
 	{
-		$this->setInput(new StringInput($userInput));
-		return $this->getInput()->getFirstArgument();
+		$this->setInput(InputFactory::create($input));
 	}
 
 	/**
 	 * コマンド名からコマンドを取得する
 	 *
-	 * @param string $commandName コマンド名
+	 * @param null|string $commandName コマンド名
 	 * @return Command コマンド
+	 * @throws \RuntimeException コマンド名がnullの場合
 	 */
-	public function findCommand(string $commandName): Command
+	public function findCommand(?string $commandName): Command
 	{
+		if (\is_null($commandName)) {
+			throw new \RuntimeException('Command name is not set.');
+		}
 		return $this->application->find($commandName);
 	}
 
@@ -137,22 +157,6 @@ class Shell
 		if ($result === CommandResults::EXIT) {
 			$this->output->writeln('Bye!');
 			$this->exit();
-		}
-	}
-
-	/**
-	 * ユーザーの入力を処理する
-	 *
-	 * @param string $userInput ユーザーの入力
-	 */
-	public function handleUserInput(string $userInput): void
-	{
-		try {
-			$commandName = $this->getCommandName($userInput);
-			$command = $this->findCommand($commandName);
-			$this->handleCommand($command);
-		} catch (\Throwable $e) {
-			$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 		}
 	}
 

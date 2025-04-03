@@ -10,9 +10,26 @@ use Hytmng\PhpShell\Command\ExitCommand;
 $shell = Shell::createForConsole('psh', '1.0.0a');
 $shell->addCommand(new PrintCommand());
 $shell->addCommand(new ExitCommand());
-$shell->launch();
 
-while ($shell->isRunning()) {
-	$input = readline($shell->getPrompt());
-	$shell->handleUserInput($input);
+function main(Shell $shell)
+{
+	$shell->launch();
+
+	while ($shell->isRunning()) {
+		$userInput = readline($shell->getPrompt());
+		$shell->handleUserInput($userInput);
+
+		$input = $shell->getInput();
+		$output = $shell->getOutput();
+
+		try {
+			$commandName = $input->getFirstArgument();
+			$command = $shell->findCommand($commandName);
+			$shell->handleCommand($command);
+		} catch (\Throwable $e) {
+			$output->writeln('<error>' . $e->getMessage() . '</error>');
+		}
+	}
 }
+
+main($shell);
