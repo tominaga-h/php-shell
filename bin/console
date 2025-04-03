@@ -25,7 +25,7 @@ function main(Shell $shell)
 		try {
 			$commandName = $input->getFirstArgument();
 			$command = $shell->findCommand($commandName);
-			$shell->handleCommand($command);
+			$shell->execCommand($command);
 		} catch (\Throwable $e) {
 			$output->writeln('<error>' . $e->getMessage() . '</error>');
 		}

@@ -141,7 +141,7 @@ class Shell
 	 *
 	 * @param Command $command コマンド
 	 */
-	public function handleCommand(Command $command): void
+	public function execCommand(Command $command): void
 	{
 		$result = $command->run($this->input, $this->output);
 		$this->handleResult($result);
