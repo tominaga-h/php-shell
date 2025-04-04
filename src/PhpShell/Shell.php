@@ -11,12 +11,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\IO\InputFactory;
 use Hytmng\PhpShell\Command\CommandResults;
+use Hytmng\PhpShell\Prompt\PromptTemplate;
 
 class Shell
 {
 	private ?Application $application;
 	private ?InputInterface $input;
 	private ?OutputInterface $output;
+	private ?PromptTemplate $promptTemplate;
 
 	// シェルが実行中かどうか
 	private bool $running;
@@ -29,6 +31,7 @@ class Shell
 		$this->input = null;
 		$this->output = null;
 		$this->running = false;
+		$this->promptTemplate = null;
 	}
 
 	public static function createForConsole(string $name, string $version): self
@@ -111,9 +114,18 @@ class Shell
 		$this->prompt = $prompt;
 	}
 
+	public function setPromptTemplate(PromptTemplate $template): void
+	{
+		$this->promptTemplate = $template;
+	}
+
 	public function getPrompt(): string
 	{
-		return $this->prompt;
+		if (\is_null($this->promptTemplate)) {
+			return $this->prompt;
+		}
+
+		return $this->promptTemplate->getPrompt();
 	}
 
 	public function launch(): void

@@ -9,3 +9,8 @@ services:
         resource: '../src/PhpShell/Command/*'
         exclude: '../src/PhpShell/Command/CommandResults.php'
         tags: ['console.command']
+
+    Hytmng\PhpShell\Prompt\Provider\:
+        resource: '../src/PhpShell/Prompt/Provider/*'
+        exclude: '../src/PhpShell/Prompt/Provider/VariableProviderInterface.php'
+        tags: ['console.prompt.variable_provider']

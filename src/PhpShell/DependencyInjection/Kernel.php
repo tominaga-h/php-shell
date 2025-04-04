@@ -34,4 +34,15 @@ class Kernel
 		}
 		return $commands;
 	}
+
+	public function getPromptVariableProviders(): array
+	{
+		$services = $this->container->findTaggedServiceIds('console.prompt.variable_provider');
+		$providers = [];
+		foreach ($services as $serviceId => $_) {
+			$provider = $this->container->get($serviceId);
+			$providers[] = $provider;
+		}
+		return $providers;
+	}
 }
