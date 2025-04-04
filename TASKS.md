@@ -2,7 +2,7 @@
 
 ## GENERAL
 
-- [ ] src/PhpShell/Command配下のコマンドをsymfony/DIで取得できるようにする
+- [x] src/PhpShell/Command配下のコマンドをsymfony/DIで取得できるようにする
 - [x] symfony/consoleを使って実装する
 - [x] readline等の標準入力はクラスに書かず、bin/consoleに書くことでテスト回避
 - [x] symfony/consoleのApplicationクラスをラップするクラスをsrc/PhpShellに追加

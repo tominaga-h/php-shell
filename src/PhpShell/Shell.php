@@ -9,8 +9,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Hytmng\PhpShell\ReplApplication;
-use Hytmng\PhpShell\Command\CommandResults;
 use Hytmng\PhpShell\IO\InputFactory;
+use Hytmng\PhpShell\Command\CommandResults;
+
 class Shell
 {
 	private ?Application $application;
@@ -89,6 +90,15 @@ class Shell
 		}
 
 		$this->application->add($command);
+	}
+
+	public function addCommands(array $commands): void
+	{
+		foreach ($commands as $command) {
+			if ($command instanceof Command) {
+				$this->addCommand($command);
+			}
+		}
 	}
 
 	public function getCommands(): array
