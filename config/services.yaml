@@ -1,0 +1,11 @@
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Hytmng\PhpShell\Command\:
+        resource: '../src/PhpShell/Command/*'
+        exclude: '../src/PhpShell/Command/CommandResults.php'
+        tags: ['console.command']

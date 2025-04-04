@@ -4,15 +4,12 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Hytmng\PhpShell\Shell;
-use Hytmng\PhpShell\Command\PrintCommand;
-use Hytmng\PhpShell\Command\ExitCommand;
-use Hytmng\PhpShell\Command\ListCommand;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Hytmng\PhpShell\DependencyInjection\Kernel;
+
+$kernel = new Kernel();
 
 $shell = Shell::createForConsole('psh', '1.0.0a');
-$shell->addCommand(new PrintCommand());
-$shell->addCommand(new ExitCommand());
-$shell->addCommand(new ListCommand());
+$shell->addCommands($kernel->getCommands());
 
 function main(Shell $shell)
 {
