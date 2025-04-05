@@ -13,6 +13,10 @@ class CwdVariableProvider implements VariableProviderInterface
 
 	public function getValue(): string
 	{
-		return basename(getcwd());
+		$path = basename(getcwd());
+		if ($path === '') {
+			return '/';
+		}
+		return $path;
 	}
 }
