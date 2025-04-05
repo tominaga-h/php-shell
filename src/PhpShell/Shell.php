@@ -12,6 +12,7 @@ use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\IO\InputFactory;
 use Hytmng\PhpShell\Command\CommandResults;
 use Hytmng\PhpShell\Prompt\PromptTemplate;
+use Hytmng\PhpShell\DependencyInjection\Kernel;
 
 class Shell
 {
@@ -19,6 +20,7 @@ class Shell
 	private ?InputInterface $input;
 	private ?OutputInterface $output;
 	private ?PromptTemplate $promptTemplate;
+	private ?Kernel $kernel;
 
 	// シェルが実行中かどうか
 	private bool $running;
@@ -32,6 +34,7 @@ class Shell
 		$this->output = null;
 		$this->running = false;
 		$this->promptTemplate = null;
+		$this->kernel = null;
 	}
 
 	public static function createForConsole(string $name, string $version): self
@@ -40,6 +43,7 @@ class Shell
 		$shell->setApplication(new ReplApplication($name, $version));
 		$shell->setInput(InputFactory::create());
 		$shell->setOutput(new ConsoleOutput());
+		$shell->setKernel(new Kernel());
 		return $shell;
 	}
 
@@ -51,6 +55,11 @@ class Shell
 	public function getApplication(): ?Application
 	{
 		return $this->application;
+	}
+
+	public function setKernel(Kernel $kernel): void
+	{
+		$this->kernel = $kernel;
 	}
 
 	public function setInput(InputInterface $input): void
@@ -138,7 +147,15 @@ class Shell
 			throw new \RuntimeException('Output is not set.');
 		}
 
+		if (!\is_null($this->kernel)) {
+			// コマンド自動登録
+			$this->addCommands($this->kernel->getCommands());
+		}
+
+		// シェルを実行中にする
 		$this->running = true;
+
+		// タイトル表示
 		$this->getStyle()->title(\sprintf('Welcome to %s!', $this->application->getName()));
 	}
 
