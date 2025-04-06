@@ -7,7 +7,9 @@ services:
 
     Hytmng\PhpShell\Command\:
         resource: '../src/PhpShell/Command/*'
-        exclude: '../src/PhpShell/Command/CommandResults.php'
+        exclude:
+            - '../src/PhpShell/Command/CommandResults.php'
+            - '../src/PhpShell/Command/Command.php'
         tags: ['console.command']
 
     Hytmng\PhpShell\Prompt\Provider\:
