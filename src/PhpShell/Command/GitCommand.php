@@ -10,36 +10,34 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Hytmng\PhpShell\Command\Command;
 use Hytmng\PhpShell\Command\CommandResults;
 
-class ExecCommand extends Command
+class GitCommand extends Command
 {
 	protected function configure(): void
 	{
 		$this
-			->setName('exec')
-			->setDescription('execute an external command like `/bin/ls`')
-			->setAsExternalCommand('cmd')
+			->setName('git')
+			->setDescription('execute git command')
+			->setAsExternalCommand('gitArgs')
 			->addArgument(
-				'cmd',
+				'gitArgs',
 				InputArgument::REQUIRED | InputArgument::IS_ARRAY,
-				'A command to execute like `/bin/ls -la`'
+				'git command arguments'
 			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$command = $input->getArgument('cmd');
-		// 最初の引数はコマンド名なので、1以降の引数を取得
-		$process = new Process(\array_slice($command, 1));
+		$gitArg = $input->getArgument('gitArgs');
+		$process = new Process($gitArg);
 		$process->run(function ($type, $buffer) use ($output) {
 			$output->write($buffer);
 		});
 		$output->write("\n");
 
 		if (!$process->isSuccessful()) {
-			throw new ProcessFailedException($process);
+			return CommandResults::FAILURE;
 		}
-
 		return CommandResults::SUCCESS;
 	}
 }

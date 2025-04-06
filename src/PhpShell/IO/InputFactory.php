@@ -20,20 +20,22 @@ class InputFactory
 	}
 
 	/**
-	 * 元のInputをExecコマンドを実行するためのInputに変換
+	 * 元のInputをArrayInputに変換
 	 *
 	 * @param InputInterface $originalInput 元のInput
+	 * @param string $argumentName 設定するargumentの名称
 	 * @return InputInterface 変換後のInput
 	 */
-	public static function convertToExec(InputInterface $originalInput): InputInterface
+	public static function convertToArray(InputInterface $originalInput, string $argumentName): InputInterface
 	{
 		$string = (string) $originalInput;
-		$args = \explode(' ', $string);
+		$originalArgs = \explode(' ', $string);
+		$args = \array_map(function ($arg) {
+			return \trim($arg, "'"); // クオートを削除
+		}, $originalArgs);
+
 		return new ArrayInput([
-			'command' => [
-				$originalInput->getFirstArgument(),
-				\implode(' ', \array_slice($args, 1)),
-			]
+			"{$argumentName}" => $args
 		]);
 	}
 

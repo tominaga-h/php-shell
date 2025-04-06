@@ -3,7 +3,6 @@
 namespace Hytmng\PhpShell;
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -11,6 +10,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\IO\InputFactory;
+use Hytmng\PhpShell\Command\Command;
 use Hytmng\PhpShell\Command\CommandResults;
 use Hytmng\PhpShell\Command\ExecCommand;
 use Hytmng\PhpShell\Prompt\PromptTemplate;
@@ -197,15 +197,26 @@ class Shell
 		}
 
 		try {
-			return $this->application->find($commandName);
+			$command = $this->application->find($commandName);
+
+			// 外部コマンドに設定されている場合は、Inputを変換
+			if ($command instanceof Command && $command->isExternalCommand()) {
+				$input = InputFactory::convertToArray($this->input, $command->getArgumentName());
+				$this->setInput($input);
+			}
+
+			return $command;
+
 		} catch (\Throwable $e) {
 			$file = new File($commandName);
+
 			if ($file->exists() && $file->isExecutable()) {
 				// execコマンドに変換
-				$input = InputFactory::convertToExec($this->input);
+				$input = InputFactory::convertToArray($this->input, 'cmd');
 				$this->setInput($input);
 				return new ExecCommand();
 			}
+
 			unset($file);
 			throw new CommandNotFoundException("Command \"{$commandName}\" is not found.");
 		}
