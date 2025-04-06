@@ -8,11 +8,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\IO\InputFactory;
 use Hytmng\PhpShell\Command\CommandResults;
+use Hytmng\PhpShell\Command\ExecCommand;
 use Hytmng\PhpShell\Prompt\PromptTemplate;
 use Hytmng\PhpShell\DependencyInjection\Kernel;
+use Hytmng\PhpShell\Helper\FileSystem\File;
 
 class Shell
 {
@@ -185,13 +188,27 @@ class Shell
 	 * @param null|string $commandName コマンド名
 	 * @return Command コマンド
 	 * @throws \RuntimeException コマンド名がnullの場合
+	 * @throws CommandNotFoundException コマンドが見つからない場合
 	 */
 	public function findCommand(?string $commandName): Command
 	{
 		if (\is_null($commandName)) {
 			throw new \RuntimeException('Command name is not set.');
 		}
-		return $this->application->find($commandName);
+
+		try {
+			return $this->application->find($commandName);
+		} catch (\Throwable $e) {
+			$file = new File($commandName);
+			if ($file->exists() && $file->isExecutable()) {
+				// execコマンドに変換
+				$input = InputFactory::convertToExec($this->input);
+				$this->setInput($input);
+				return new ExecCommand();
+			}
+			unset($file);
+			throw new CommandNotFoundException("Command \"{$commandName}\" is not found.");
+		}
 	}
 
 	/**
