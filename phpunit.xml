@@ -9,6 +9,10 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <exclude>
+            <directory suffix=".php">src/PhpShell/Command</directory>
+            <directory suffix=".php">src/PhpShell/Prompt/Provider</directory>
+        </exclude>
     </source>
     <coverage>
         <report>
