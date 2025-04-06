@@ -158,4 +158,14 @@ class File
 		return $ownerExec && $groupExec && $otherExec;
     }
 
+	/**
+	 * ファイルが存在するかどうかを確認する
+	 *
+	 * @return bool
+	 */
+	public function exists(): bool
+	{
+		return file_exists($this->path);
+	}
+
 }

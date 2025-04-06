@@ -25,6 +25,15 @@ class DirectoryTest extends TestCase
 
 	public function tearDown(): void
 	{
+		if (!is_dir($this->tempDir)){
+			return;
+		}
+
+		$this->deleteDirectory();
+	}
+
+	private function deleteDirectory()
+	{
 		$files = $this->directory->getFiles();
 		foreach ($files as $file) {
 			unlink($file->getPath());
@@ -54,6 +63,19 @@ class DirectoryTest extends TestCase
 		$file = $files[0];
 		$this->assertEquals('testfile.txt', $file->getFileName());
 		$this->assertEquals('test', $file->getContents());
+	}
+
+	public function testExists()
+	{
+		$actual = $this->directory->exists();
+		$this->assertTrue($actual);
+	}
+
+	public function testExists_false()
+	{
+		$this->deleteDirectory();
+		$actual = $this->directory->exists();
+		$this->assertFalse($actual);
 	}
 
 }

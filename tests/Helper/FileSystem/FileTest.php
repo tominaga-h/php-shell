@@ -132,4 +132,18 @@ class FileTest extends TestCase
 		$actual = $this->file->isExecutable();
 		$this->assertTrue($actual);
 	}
+
+	public function testExists()
+	{
+		$actual = $this->file->exists();
+		$this->assertTrue($actual);
+	}
+
+	public function testExists_false()
+	{
+		unlink($this->tempFile);
+		$actual = $this->file->exists();
+		$this->assertFalse($actual);
+	}
+
 }
