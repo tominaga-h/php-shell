@@ -12,7 +12,6 @@ use Hytmng\PhpShell\Command\CommandResults;
 use Hytmng\PhpShell\Helper\Styler;
 use Hytmng\PhpShell\Helper\Formatter;
 use Hytmng\PhpShell\Helper\FileSystem\Directory;
-use Hytmng\PhpShell\Helper\FileSystem\File;
 
 
 class LsCommand extends Command

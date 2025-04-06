@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\Table;
 use Hytmng\PhpShell\Command\CommandResults;
 
 class ListCommand extends Command
@@ -24,14 +25,18 @@ class ListCommand extends Command
 		$commands = \is_null($app) ? [] : $app->all();
 
 		$output->writeln('<comment>Available commands:</comment>');
-		$width = $this->getColumnWidth($commands);
+
+		$table = new Table($output);
+		$table->setHeaders(['Name', 'Description']);
 
 		foreach ($commands as $command) {
-			$commandName = $command->getName();
-			$spacingWidth = $width - Helper::width($commandName);
-			$space = str_repeat(' ', $spacingWidth);
-			$output->writeln(sprintf('  <info>%s</info>%s%s', $commandName, $space, $command->getDescription()));
+			$table->addRow([
+				$command->getName(),
+				$command->getDescription(),
+			]);
 		}
+
+		$table->render();
 		return CommandResults::SUCCESS;
 	}
 
