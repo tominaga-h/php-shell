@@ -105,7 +105,7 @@ class FileTest extends TestCase
 
 	public function testType_dir()
 	{
-		$this->file = new File('/tmp');
+		$this->file = new File(sys_get_temp_dir());
 		$actual = $this->file->getType();
 		$expected = 'dir';
 		$this->assertEquals($expected, $actual);
