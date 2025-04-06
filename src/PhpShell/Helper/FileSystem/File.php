@@ -118,21 +118,6 @@ class File
     }
 
 	/**
-	 * ファイルのタイプを取得する
-	 *
-	 * @return string
-	 */
-    public function getType(): string
-    {
-        return match (true) {
-            is_link($this->path) => 'link',
-            is_dir($this->path) => 'dir',
-            is_file($this->path) => 'file',
-            default => 'unknown'
-        };
-    }
-
-	/**
 	 * ファイルがディレクトリかどうかを確認する
 	 *
 	 * @return bool
@@ -141,6 +126,16 @@ class File
     {
         return is_dir($this->path);
     }
+
+	/**
+	 * ファイルがシンボリックリンクかどうかを確認する
+	 *
+	 * @return bool
+	 */
+	public function isLink(): bool
+	{
+		return is_link($this->path);
+	}
 
 	/**
 	 * ファイルが実行可能かどうかを確認する

@@ -99,31 +99,19 @@ class FileTest extends TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function testType_link()
+	public function testIsDirectory()
+	{
+		$this->file = new File(sys_get_temp_dir());
+		$this->assertTrue($this->file->isDirectory());
+	}
+
+	public function testIsLink()
 	{
 		$linkFile = $this->tempFile . '.link';
 		symlink($this->tempFile, $linkFile);
 		$this->file = new File($linkFile);
-		$actual = $this->file->getType();
-		$expected = 'link';
-		$this->assertEquals($expected, $actual);
+		$this->assertTrue($this->file->isLink());
 		unlink($linkFile);
-	}
-
-	public function testType_dir()
-	{
-		$this->file = new File(sys_get_temp_dir());
-		$actual = $this->file->getType();
-		$expected = 'dir';
-		$this->assertEquals($expected, $actual);
-		$this->assertTrue($this->file->isDirectory());
-	}
-
-	public function testType_file()
-	{
-		$actual = $this->file->getType();
-		$expected = 'file';
-		$this->assertEquals($expected, $actual);
 	}
 
 	public function testExecutable()
