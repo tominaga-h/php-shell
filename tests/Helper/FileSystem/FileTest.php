@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Prompt;
+namespace Tests\Helper\FileSystem;
 
 use PHPUnit\Framework\TestCase;
 use Hytmng\PhpShell\Helper\FileSystem\File;
