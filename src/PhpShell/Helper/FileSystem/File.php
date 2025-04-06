@@ -35,6 +35,16 @@ class File
     }
 
 	/**
+	 * ファイルの内容を取得する
+	 *
+	 * @return string
+	 */
+	public function getContents(): string
+	{
+		return file_get_contents($this->path);
+	}
+
+	/**
 	 * ファイルのパーミッションを取得する
 	 *
 	 * @return int

@@ -41,6 +41,13 @@ class FileTest extends TestCase
 		$this->assertTrue(str_starts_with($actual, $expected));
 	}
 
+	public function testContents()
+	{
+		$actual = $this->file->getContents();
+		$expected = 'test';
+		$this->assertEquals($expected, $actual);
+	}
+
 	public function testPermissions()
 	{
 		$actual = $this->file->getPermissions();
