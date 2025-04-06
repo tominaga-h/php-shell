@@ -121,6 +121,17 @@ class FileTest extends TestCase
 		$this->assertTrue($actual);
 	}
 
+	public function testIsHiddenFile()
+	{
+		// 既存の一時ファイルを削除
+		unlink($this->tempFile);
+
+		// 隠しファイルを作成
+		$this->tempFile = tempnam(sys_get_temp_dir(), '.hidden');
+		$this->file = new File($this->tempFile);
+		$this->assertTrue($this->file->isHiddenFile());
+	}
+
 	public function testExists()
 	{
 		$actual = $this->file->exists();

@@ -154,6 +154,16 @@ class File
     }
 
 	/**
+	 * ファイルが隠しファイルかどうかを確認する
+	 *
+	 * @return bool
+	 */
+	public function isHiddenFile(): bool
+	{
+		return \str_starts_with($this->getFileName(), '.');
+	}
+
+	/**
 	 * ファイルが存在するかどうかを確認する
 	 *
 	 * @return bool
