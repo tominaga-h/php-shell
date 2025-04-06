@@ -34,9 +34,9 @@ class StylerTest extends TestCase
 		}
 	}
 
-	public function testStylePermissionString_decorated()
+	public function testStylePermissionString_nonDecorated()
 	{
-		$this->styler = new Styler(true);
+		$this->styler = new Styler(false);
 		$actual = $this->styler->stylePermissionString('-');
 		$expected = '-';
 		$this->assertEquals($expected, $actual);
@@ -66,9 +66,9 @@ class StylerTest extends TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function testStyleFileName_decorated()
+	public function testStyleFileName_nonDecorated()
 	{
-		$this->styler = new Styler(true);
+		$this->styler = new Styler(false);
 		$fileMock = $this->getFileMock(true, false, false);
 		$actual = $this->styler->styleFileName($fileMock);
 		$expected = 'test';

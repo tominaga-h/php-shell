@@ -9,14 +9,14 @@ class Styler
 {
 	private bool $decorated;
 
-	public function __construct(bool $decorated = false)
+	public function __construct(bool $decorated = true)
 	{
 		$this->decorated = $decorated;
 	}
 
 	public function stylePermissionString(string $perm): string
 	{
-		if ($this->decorated) {
+		if (!$this->decorated) {
 			return $perm;
 		}
 
@@ -41,7 +41,7 @@ class Styler
 	{
 		$fileName = $file->getFileName();
 
-		if ($this->decorated) {
+		if (!$this->decorated) {
 			return $fileName;
 		}
 
