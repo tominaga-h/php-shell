@@ -75,6 +75,15 @@ class StylerTest extends TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
+	public function testStyleFileName_default()
+	{
+		$this->styler = new Styler();
+		$fileMock = $this->getFileMock(false, false, false);
+		$actual = $this->styler->styleFileName($fileMock);
+		$expected = 'test';
+		$this->assertEquals($expected, $actual);
+	}
+
 	private function getFileMock(bool $isDirectory, bool $isLink, bool $isExecutable)
 	{
 		$fileMock = $this->getMockBuilder(File::class)
