@@ -7,7 +7,7 @@ use Hytmng\PhpShell\Shell;
 use Hytmng\PhpShell\Prompt\PromptTemplate;
 
 $shell = Shell::createForConsole('psh', '1.0.0a');
-$shell->setPromptTemplate(new PromptTemplate('[{user}:{hostname} {cwd}]$ '));
+$shell->setPromptTemplate(new PromptTemplate('[{user}:{hostname} {cwd}] *psh> '));
 
 function main(Shell $shell)
 {
