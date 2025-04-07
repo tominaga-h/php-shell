@@ -29,7 +29,14 @@ class GitCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$gitArg = $input->getArgument('gitArgs');
-		$process = new Process($gitArg);
+		$additionalArgs = []; // 追加で必要な引数があったら登録
+		$args = array_merge($gitArg, $additionalArgs);
+		$process = new Process($args);
+
+		if (posix_isatty(STDIN)) {
+			$process->setTty(true);
+		}
+
 		$process->run(function ($type, $buffer) use ($output) {
 			$output->write($buffer);
 		});

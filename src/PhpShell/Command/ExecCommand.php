@@ -31,6 +31,11 @@ class ExecCommand extends Command
 		$command = $input->getArgument('cmd');
 		// 最初の引数はコマンド名なので、1以降の引数を取得
 		$process = new Process(\array_slice($command, 1));
+
+		if (posix_isatty(STDIN)) {
+			$process->setTty(true);
+		}
+
 		$process->run(function ($type, $buffer) use ($output) {
 			$output->write($buffer);
 		});
