@@ -8,10 +8,14 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Hytmng\PhpShell\Shell;
 use Hytmng\PhpShell\ReplApplication;
 use Hytmng\PhpShell\Command\PrintCommand;
 use Hytmng\PhpShell\Command\ExitCommand;
+use Hytmng\PhpShell\Command\GitCommand;
+use Hytmng\PhpShell\Command\ExecCommand;
+use Hytmng\PhpShell\Prompt\PromptTemplate;
 
 class ShellTest extends TestCase
 {
@@ -65,6 +69,24 @@ class ShellTest extends TestCase
 		$style = $this->shell->getStyle();
 
 		$this->assertInstanceOf(SymfonyStyle::class, $style);
+	}
+
+	public function testPromptTemplate()
+	{
+		$expected = 'test> ';
+		$promptTemplateMock = $this->getMockBuilder(PromptTemplate::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['getPrompt'])
+			->getMock();
+
+		$promptTemplateMock
+			->expects($this->once())
+			->method('getPrompt')
+			->willReturn($expected);
+
+		$this->shell->setPromptTemplate($promptTemplateMock);
+		$actual = $this->shell->getPrompt();
+		$this->assertEquals($expected, $actual);
 	}
 
 	public function testLaunch_throwException()
@@ -140,6 +162,43 @@ class ShellTest extends TestCase
 		$this->expectException(\RuntimeException::class);
 		$this->expectExceptionMessage('Command name is not set.');
 		$this->shell->findCommand(null);
+	}
+
+	public function testFindCommand_externalCommand()
+	{
+		$this->shell = Shell::createForConsole('test', '1.0.0');
+		$this->shell->setInput(new StringInput('git status'));
+		$this->shell->addCommand(new GitCommand());
+
+		$command = $this->shell->findCommand('git');
+		$input = $this->shell->getInput();
+		$actual = (string) $input;
+		$expected = 'git status';
+
+		$this->assertInstanceOf(GitCommand::class, $command);
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function testFindCommand_execCommand()
+	{
+		$this->shell = Shell::createForConsole('test', '1.0.0');
+		$this->shell->setInput(new StringInput('/bin/ls'));
+		$this->shell->addCommand(new ExecCommand());
+
+		$command = $this->shell->findCommand('/bin/ls');
+		$input = $this->shell->getInput();
+		$actual = (string) $input;
+		$expected = "'/bin/ls'";
+
+		$this->assertInstanceOf(ExecCommand::class, $command);
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function testFindCommand_CommandNotFound()
+	{
+		$this->expectException(CommandNotFoundException::class);
+		$this->expectExceptionMessage('Command "notfound" is not found.');
+		$this->shell->findCommand('notfound');
 	}
 
 	public function testExecCommand()
