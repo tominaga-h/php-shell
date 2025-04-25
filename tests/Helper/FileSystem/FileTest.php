@@ -66,14 +66,28 @@ class FileTest extends TestCase
 	public function testOwner()
 	{
 		$actual = $this->file->getOwner();
-		$expected = 'root';
+		// 環境に依存せず、実ファイルの所有者から期待値を算出
+		$uid = fileowner($this->tempFile);
+		if (function_exists('posix_getpwuid')) {
+			$info = posix_getpwuid($uid);
+			$expected = $info['name'] ?? (string)$uid;
+		} else {
+			$expected = (string)$uid;
+		}
 		$this->assertEquals($expected, $actual);
 	}
 
 	public function testGroup()
 	{
 		$actual = $this->file->getGroup();
-		$expected = 'root';
+		// 環境に依存せず、実ファイルのグループから期待値を算出
+		$gid = filegroup($this->tempFile);
+		if (function_exists('posix_getgrgid')) {
+			$info = posix_getgrgid($gid);
+			$expected = $info['name'] ?? (string)$gid;
+		} else {
+			$expected = (string)$gid;
+		}
 		$this->assertEquals($expected, $actual);
 	}
 
